@@ -11,42 +11,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class WebController {
 
-    @GetMapping("/")
-    public String showForm(Model model){
-        // adicionar uma lista de operações
-        model.addAttribute("modelOperacoes", List.of("Soma", "Subtracao"));
-        return "form";
-    }
+	@GetMapping("/")
+	public String showForm(Model model) {
+		//adicionar uma lista de operações
+		model.addAttribute("modelOperacoes",List.of("Soma","Subtracao"));
+		return "form";
+	}
 
-    @PostMapping("/")
-    public String handleFormSubmission(@RequestParam String modelOperacoes,
-                                       @RequestParam String valor01,
-                                       @RequestParam String valor02,
-                                       Model model){
+	@PostMapping("/")
+	public String handleFormSubmission(@RequestParam String modelOperacoes,
+			                           @RequestParam String valor01,
+			                           @RequestParam String valor02,
+			                           Model model) {
+		if(modelOperacoes.isEmpty() || valor01.isEmpty() || valor02.isEmpty())
+			return null;
 
-        if(modelOperacoes.isEmpty() || valor01.isEmpty() || valor02.isEmpty())
-            return null;
+		String resposta = "";
+		int resp = 0;
+		switch (modelOperacoes) {
+			case "Soma":
+				resp = Integer.parseInt(valor01) + Integer.parseInt(valor02);
+				break;
+			case "Subtracao":
+				resp = Integer.parseInt(valor01) - Integer.parseInt(valor02);
+				break;
+		}
+		resposta = String.valueOf(resp);
 
+		//devolver a resposta para a tela:
+		model.addAttribute("modelOperacoes",List.of("Soma","Subtracao"));
+		model.addAttribute("response",resposta);
+		model.addAttribute("selectedModel",modelOperacoes);
+		return "form";
+	}
 
-        String resposta = "";
-        int resp = 0;
-        switch(modelOperacoes){
-            case "Soma":
-                resp = Integer.parseInt(valor01) + Integer.parseInt(valor02);
-                resposta = String.valueOf(resp);
-                break;
-            case "Subtracao":
-                resp = Integer.parseInt(valor01) - Integer.parseInt(valor02);
-                resposta = String.valueOf(resp);
-                break;
-        }
-        resposta = String.valueOf(resp);
-
-        //devolver a resposta para a tela
-
-        model.addAttribute("modelOperacoes",List.of("Soma", "Subtracao"));
-        model.addAttribute("response", resposta);
-        model.addAttribute("selectedModel", modelOperacoes);
-        return "form";
-    }
 }
